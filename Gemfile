@@ -15,6 +15,14 @@ gem 'twitter'
 
 gem 'emoji'
 
+gem 'color', '~> 1.8'
+
+group :development, :test do
+  gem 'guard'
+  gem 'guard-rspec', require: false
+  gem 'rspec-rails'
+end
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
