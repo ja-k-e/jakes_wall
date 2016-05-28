@@ -1,4 +1,4 @@
-class Tweets
+class TweetsPackage
   def initialize(tweets)
     @tweets = tweets
   end
@@ -42,7 +42,8 @@ class Tweets
     text = tweet.text
     text = clean_emoji(text)
     text = clean_string(text, color) if color
-    text = clean_string(text, image) if image
+    text = clean_usernames(text)
+    text = clean_links(text)
     text
   end
 
@@ -53,5 +54,13 @@ class Tweets
   def clean_string(text, string)
     text.gsub(string, '')
     text.gsub('  ', ' ')
+  end
+
+  def clean_usernames(text)
+    text.gsub(/@[a-zA-Z0-9_]+ /, '')
+  end
+
+  def clean_links(text)
+    text.gsub(/https?:\/\/[^ ]+/, '')
   end
 end
