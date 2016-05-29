@@ -91,7 +91,7 @@ class TweetsPackage
   end
 
   def clean_links(text)
-    text.gsub(/https?:\/\/[^ ]+/, '')
+    text.gsub(/https?:\/\/[^ )]+/, '')
   end
 
   def clean_bookend_spaces(text)
