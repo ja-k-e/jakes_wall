@@ -1,13 +1,9 @@
 class TweetsRequest
-  def request
-    "#{mention} #{filters} #{bans}"
+  def request(term)
+    "#{term} #{filters} #{bans}"
   end
 
   private
-
-  def mention
-    '@jake_albaugh'
-  end
 
   def filters
     %w(
