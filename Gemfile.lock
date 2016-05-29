@@ -102,6 +102,7 @@ GEM
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    pg (0.18.4)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -200,6 +201,7 @@ DEPENDENCIES
   emoji
   guard
   guard-rspec
+  pg
   rack-cors
   rails (= 4.2.3)
   rails-api
@@ -208,5 +210,8 @@ DEPENDENCIES
   sqlite3
   twitter
 
+RUBY VERSION
+   ruby 2.2.4p230
+
 BUNDLED WITH
-   1.10.5
+   1.12.5
