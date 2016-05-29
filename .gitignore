@@ -18,3 +18,8 @@
 
 # ignore local env variables
 /config/local_env.yml
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
