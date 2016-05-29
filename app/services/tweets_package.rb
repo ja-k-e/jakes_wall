@@ -66,7 +66,7 @@ class TweetsPackage
   end
 
   def find_image(tweet)
-    return tweet[:media][0][:media_url].to_s if tweet[:media].present?
+    return tweet[:entities][:media][0][:media_url].to_s if tweet[:entities][:media].present?
     if tweet[:entities][:urls].present? && tweet[:entities][:urls][0][:expanded_url].include?('photo/')
       return lookup_expanded_media(tweet)
     end
