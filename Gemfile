@@ -17,6 +17,8 @@ gem 'emoji'
 
 gem 'color', '~> 1.8'
 
+gem 'awesome_print'
+
 group :development, :test do
   gem 'guard'
   gem 'guard-rspec', require: false
