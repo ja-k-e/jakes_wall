@@ -25,6 +25,7 @@ describe TweetsPackage do
       tweet = stub_tweet(
         text: 'a great color is #FF0000')
       result = TweetsPackage.new([tweet]).package
+      expect(result[0][:text]).to eq('a great color is')
       expect(result[0][:color][:css]).to eq('rgb(100.00%, 0.00%, 0.00%)')
     end
 
@@ -71,6 +72,14 @@ describe TweetsPackage do
         text: 'http://dude.co is great according to https://something.org')
       result = TweetsPackage.new([tweet]).package
       expect(result[0][:text]).to eq('is great according to')
+    end
+
+    it 'swaps image for emoji' do
+      tweet = stub_tweet(
+        text: 'hey! 😃')
+      result = TweetsPackage.new([tweet]).package
+      expect(result[0][:text]).to eq(
+        'hey! <img alt="😃" class="emoji" src="/assets/emoji/smiley.png">')
     end
   end
 

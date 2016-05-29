@@ -67,10 +67,10 @@ class TweetsPackage
 
   def clean_text(tweet, color, image)
     text = tweet.text
-    text = clean_emoji(text)
     text = clean_string(text, color) if color
     text = clean_usernames(text)
     text = clean_links(text)
+    text = clean_emoji(text)
     text = clean_bookend_spaces(text)
     text
   end
@@ -80,7 +80,7 @@ class TweetsPackage
   end
 
   def clean_string(text, string)
-    text.gsub(string, '')
+    text = text.gsub(string, '')
     text.gsub('  ', ' ')
   end
 
