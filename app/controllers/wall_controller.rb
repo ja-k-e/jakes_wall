@@ -3,8 +3,12 @@ class WallController < ApplicationController
 
   def index
     search = TweetsRequest.new.request('@jakes_wall')
-    tweets = @twitter.search(search, result_type: 'mixed').take(100)
-    @tweets = TweetsPackage.new(tweets).package
+    tweets = Twitter::REST::Request.new(
+      @twitter, :get,
+      "https://api.twitter.com/1.1/search/tweets.json?q=#{URI.escape(search)}&result_type=mixed")
+    tweets = tweets.perform
+
+    @tweets = TweetsPackage.new(tweets, @twitter).package
     render json: @tweets
   end
 end

@@ -1,29 +1,34 @@
 class TweetsPackage
-  def initialize(tweets)
+  def initialize(tweets, client)
     @tweets = tweets
+    @twitter = client
   end
 
   def package
     tweets = []
-    @tweets.each do |tweet|
-      next unless tweet.user.followers_count > 100
-      color = find_color(tweet)
-      image = find_image(tweet)
-      tweets << {
-        link: "http://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id}",
-        author_link: "http://twitter.com/#{tweet.user.screen_name}",
-        username: tweet.user.screen_name,
-        location: tweet.user.location,
-        color: generate_color(color),
-        profile_image_url: tweet.user.profile_image_url.to_s,
-        image_url: image,
-        text: clean_text(tweet, color, image)
-      }
+    @tweets[:statuses].each do |tweet|
+      next unless tweet[:user][:followers_count] > 100
+      tweets << build_tweet(tweet)
     end
     tweets
   end
 
   private
+
+  def build_tweet(tweet)
+    color = find_color(tweet)
+    image = find_image(tweet)
+    {
+      link: "http://twitter.com/#{tweet[:user][:screen_name]}/status/#{tweet[:id]}",
+      author_link: "http://twitter.com/#{tweet[:user][:screen_name]}",
+      username: tweet[:user][:screen_name],
+      location: tweet[:user][:location],
+      color: generate_color(color),
+      profile_image_url: tweet[:user][:profile_image_url].to_s,
+      media_url: image,
+      text: clean_text(tweet, color, image)
+    }
+  end
 
   def generate_color(color)
     if color.starts_with? 'rgb'
@@ -53,22 +58,35 @@ class TweetsPackage
   end
 
   def find_color(tweet)
-    inline = tweet.text.match(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/)
-    inline = tweet.text.match(/rgb\( ?\d+ ?, ?\d+ ?, ?\d+ ?\)/) unless inline
-    inline = tweet.text.match(/hsl\( ?\d+ ?, ?\d+\%? ?, ?\d+\%? ?\)/) unless inline
-    return "##{tweet.user.profile_link_color}" unless inline
+    inline = tweet[:text].match(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/)
+    inline = tweet[:text].match(/rgb\( ?\d+ ?, ?\d+ ?, ?\d+ ?\)/) unless inline
+    inline = tweet[:text].match(/hsl\( ?\d+ ?, ?\d+\%? ?, ?\d+\%? ?\)/) unless inline
+    return "##{tweet[:user][:profile_link_color]}" unless inline
     inline[0]
   end
 
   def find_image(tweet)
-    return tweet.media[0].media_url.to_s if tweet.media.present?
-    inline = tweet.text.match(/https?:\/\/[^ ]+\.(jpg|gif|png)/)
+    return tweet[:media][0][:media_url].to_s if tweet[:media].present?
+    if tweet[:entities][:urls].present? && tweet[:entities][:urls][0][:expanded_url].include?('photo/')
+      return lookup_expanded_media(tweet)
+    end
+    inline = tweet[:text].match(/https?:\/\/[^ ]+\.(jpg|gif|png)/)
     return nil unless inline
     inline[0]
   end
 
+  def lookup_expanded_media(tweet)
+    tweet = Twitter::REST::Request.new(
+      @twitter, :get,
+      "https://api.twitter.com/1.1/statuses/show.json?id=#{tweet[:id]}")
+    tweet = tweet.perform
+    media = tweet[:extended_entities][:media][0]
+    return media[:video_info][:variants][0][:url] if media[:type] == 'animated_gif'
+    media[:media_url]
+  end
+
   def clean_text(tweet, color, image)
-    text = tweet.text
+    text = tweet[:text]
     text = clean_string(text, color) if color
     text = clean_usernames(text)
     text = clean_links(text)
