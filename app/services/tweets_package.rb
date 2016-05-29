@@ -10,6 +10,7 @@ class TweetsPackage
       image = find_image(tweet)
       tweets << {
         link: "http://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id}",
+        author_link: "http://twitter.com/#{tweet.user.screen_name}",
         username: tweet.user.screen_name,
         location: tweet.user.location,
         color: generate_color(color),
