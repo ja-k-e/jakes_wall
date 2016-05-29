@@ -6,6 +6,7 @@ class TweetsPackage
   def package
     tweets = []
     @tweets.each do |tweet|
+      next unless tweet.user.followers_count > 100
       color = find_color(tweet)
       image = find_image(tweet)
       tweets << {
