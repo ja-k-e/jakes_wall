@@ -3,8 +3,7 @@ class WallController < ApplicationController
 
   def index
     search = TweetsRequest.new.request
-    puts search
-    tweets = @twitter.search(search, result_type: 'recent').take(20)
+    tweets = @twitter.search(search, result_type: 'recent').take(50)
     @tweets = TweetsPackage.new(tweets).package
     render json: @tweets
   end
