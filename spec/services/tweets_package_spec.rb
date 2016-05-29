@@ -42,6 +42,13 @@ describe TweetsPackage do
       result = TweetsPackage.new([tweet]).package
       expect(result[0][:color][:css]).to eq('rgb(100.00%, 0.00%, 0.00%)')
     end
+
+    it 'tweets from users with over 100 followers only' do
+      tweet1 = stub_tweet(followers_count: 100)
+      tweet2 = stub_tweet(followers_count: 101)
+      result = TweetsPackage.new([tweet1, tweet2]).package
+      expect(result.count).to eq(1)
+    end
   end
 
   describe 'cleans' do
@@ -97,7 +104,8 @@ describe TweetsPackage do
       location:           params[:location] || 'chicago',
       profile_image_url:  params[:profile_image_url] || 'profile.jpg',
       profile_link_color: params[:profile_link_color] || 'FFBB00',
-      screen_name:        params[:screen_name] || '@ju_ju'
+      screen_name:        params[:screen_name] || '@ju_ju',
+      followers_count:    params[:followers_count] || 101
     )
   end
 end
@@ -111,7 +119,7 @@ class StubTweet
 end
 
 class StubUser
-  attr_accessor :location, :profile_image_url, :profile_link_color, :screen_name
+  attr_accessor :location, :followers_count, :profile_image_url, :profile_link_color, :screen_name
 
   def initialize(h)
     h.each { |k, v| send("#{k}=", v) }
