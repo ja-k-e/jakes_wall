@@ -96,7 +96,8 @@ class TweetsPackage
   end
 
   def clean_emoji(text)
-    Emoji.replace_unicode_moji_with_images(text)
+    text = Emoji.replace_unicode_moji_with_images(text)
+    text.gsub('src="/assets', 'src="assets')
   end
 
   def clean_string(text, string)
