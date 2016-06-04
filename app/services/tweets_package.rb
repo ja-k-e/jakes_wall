@@ -66,9 +66,17 @@ class TweetsPackage
   end
 
   def find_image(tweet)
-    return tweet[:entities][:media][0][:media_url].to_s if tweet[:entities][:media].present?
-    if tweet[:entities][:urls].present? && tweet[:entities][:urls][0][:expanded_url].include?('photo/')
-      return lookup_expanded_media(tweet)
+    media_exists = tweet[:entities][:media].present?
+    first_media = tweet[:entities][:media][0] if media_exists
+    if media_exists && first_media[:expanded_url].include?('video/')
+      media = lookup_expanded_media(tweet)
+      return media if media
+    end
+    return first_media[:media_url].to_s if media_exists
+    entity_exists = tweet[:entities][:urls].present?
+    if entity_exists && tweet[:entities][:urls][0][:expanded_url].include?('photo/')
+      media = lookup_expanded_media(tweet)
+      return media if media
     end
     inline = tweet[:text].match(/https?:\/\/[^ ]+\.(jpg|gif|png)/)
     return nil unless inline
@@ -80,8 +88,9 @@ class TweetsPackage
       @twitter, :get,
       "https://api.twitter.com/1.1/statuses/show.json?id=#{tweet[:id]}")
     tweet = tweet.perform
-    media = tweet[:extended_entities][:media][0]
-    return media[:video_info][:variants][0][:url] if media[:type] == 'animated_gif'
+    media = tweet[:extended_entities][:media][0] if tweet[:extended_entities][:media].present?
+    return nil unless media
+    return media[:video_info][:variants][0][:url] if %w(animated_gif video).include?(media[:type])
     media[:media_url]
   end
 
