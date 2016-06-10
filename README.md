@@ -6,7 +6,7 @@ Make your Tweet appear on Jake's wall.
 
 - clone
 - `bundle install`
-- `rake db:migrate`
+- db isnt used
 - create `config/local_env.yml`
   - add `TWITTER_KEY: xxxxxxxxxxxxxxxxx`
   - add `TWITTER_SECRET: xxxxxxxxxxxxxxxxx`
