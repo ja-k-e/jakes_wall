@@ -115,7 +115,10 @@ class TweetsPackage
   end
 
   def clean_usernames(text)
-    text.gsub(/@[a-zA-Z0-9_]+ ?/, '')
+    text = text.gsub(/\A@jakes_wall ?/, '')
+    text = text.gsub(/@jakes_wall/, '^^^jakes_wall')
+    text = text.gsub(/@[a-zA-Z0-9_]+ ?/, '')
+    text.gsub('^^^jakes_wall', '@jakes_wall')
   end
 
   def clean_links(text)
